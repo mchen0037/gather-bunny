@@ -1,0 +1,16 @@
+<html>
+    <head>
+        <title>Our Gather Pet</title>
+    </head>
+    <body>
+        <img src="{{pet_sprite}}"</img>
+        <h1>Pet: {{pet_name}}</h1>
+        <p>Hunger: {{pet_hunger}}</p>
+        <p>Happiness: {{pet_happiness}}</p>
+        {% if pet_is_sleeping %}
+        <p> {{pet_name}} is sleeping... shh.. </p>
+        {% else %}
+        <p> {{pet_name}} is awake and ready to play!</p>
+        {% endif %}
+    </body>
+</html>

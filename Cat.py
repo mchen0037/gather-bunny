@@ -1,4 +1,5 @@
 from datetime import datetime
+import time
 
 class Cat:
     def __init__(self):
@@ -6,6 +7,7 @@ class Cat:
         self.hunger = 100
         self.happiness = 50
         self.is_sleeping = False
+        self.update_state()
 
     def update_state(self):
         """
@@ -14,7 +16,7 @@ class Cat:
         # Determines if it is night time or not and returns True or False
         # Night time is determined as 10:00pm PST - 8am PST
         current_time = datetime.now()
-        if current_time.hour >= 22 and current_time.hour <= 8:
+        if current_time.hour >= 22 or current_time.hour <= 8:
             self.is_sleeping = True
         else:
             self.is_sleeping = False
@@ -33,7 +35,7 @@ class Cat:
                 self.happiness = self.happiness - 1
 
     def play(self):
-        self.happiness = self.happiness + 20
+        self.happiness = max(self.happiness + 20, 100)
 
     def feed(self):
-        self.hunger = self.hunger + 30
+        self.hunger = max(self.hunger + 30, 100)
