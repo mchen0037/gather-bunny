@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from flask import render_template
+from flask_sslify import SSLify
 from flask_cors import CORS
 
 import os
@@ -14,6 +15,8 @@ from Cat import Cat
 
 app = Flask(__name__)
 CORS(app)
+if 'DYNO' in os.environ:
+    sslify = SSLify(app)
 
 c = Cat()
 c.name = "Lily"
