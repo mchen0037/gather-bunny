@@ -22,11 +22,15 @@ if 'DYNO' in os.environ:
 c = Cat()
 c.name = "Lily"
 
+lock_variables = False
+
 @app.before_first_request
 def light_thread():
     def run():
         while True:
+            lock_variables = True
             c.update_state()
+            lock_variables = False
             time.sleep(65)
     thread = threading.Thread(target=run)
     thread.start()
@@ -49,13 +53,17 @@ def cat():
 
 @app.route("/feed")
 def feed():
+    lock_variables = True
     c.feed()
+    lock_variables = False
     time.sleep(1)
     return redirect(f"/")
 
 @app.route("/play")
 def play():
+    lock_variables = True
     c.play()
+    lock_variables = False
     time.sleep(1)
     return redirect(f"/")
 
