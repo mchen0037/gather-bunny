@@ -1,6 +1,8 @@
 from datetime import datetime
 import time
 
+import requests
+
 import pyrebase
 import os
 
@@ -124,6 +126,34 @@ class Cat:
         new_state = self.update_sprite(new_state)
         db.child("cats").child("Lily").set(new_state)
 
+    def gather_move_up(self):
+        map_state = self.get_gather_map_state()
+        map_state["objects"][-1]["y"] = map_state["objects"][-1]["y"] - 1
+        # print out the status code from the API
+        print(self.set_gather_map_state(map_state))
+        return
+
+    def gather_move_down(self):
+        map_state = self.get_gather_map_state()
+        map_state["objects"][-1]["y"] = map_state["objects"][-1]["y"] + 1
+        # print out the status code from the API
+        print(self.set_gather_map_state(map_state))
+        return
+
+    def gather_move_left(self):
+        map_state = self.get_gather_map_state()
+        map_state["objects"][-1]["x"] = map_state["objects"][-1]["x"] - 1
+        # print out the status code from the API
+        print(self.set_gather_map_state(map_state))
+        return
+
+    def gather_move_right(self):
+        map_state = self.get_gather_map_state()
+        map_state["objects"][-1]["x"] = map_state["objects"][-1]["x"] + 1
+        # print out the status code from the API
+        print(self.set_gather_map_state(map_state))
+        return
+
     def test(self):
         """
         Lower exp, happiness, and hunger to test the cat
@@ -134,3 +164,24 @@ class Cat:
 
     def get_state(self):
         return db.child("cats").child("Lily").get().val()
+
+    def get_gather_map_state(self):
+        map_state = requests.get("https://gather.town/api/getMap",
+            params={
+                "apiKey": os.environ["GATHER_API_KEY"],
+                "spaceId": "Uu7dRIJ7BdzD44NS\\party",
+                "mapId": "homeroom"
+            }
+        )
+        return map_state.json()
+
+    def set_gather_map_state(self, new_map):
+        req = requests.post("https://gather.town/api/setMap",
+            json={
+                "apiKey": os.environ["GATHER_API_KEY"],
+                "spaceId": "Uu7dRIJ7BdzD44NS\\party",
+                "mapId": "homeroom",
+                "mapContent": new_map
+            }
+        )
+        return req.status_code

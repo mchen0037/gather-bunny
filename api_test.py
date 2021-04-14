@@ -1,6 +1,5 @@
 import requests
 import os
-import jsonify
 
 data = requests.get("https://gather.town/api/getMap",
     params={
