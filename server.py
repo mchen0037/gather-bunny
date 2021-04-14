@@ -50,11 +50,13 @@ def cat():
 @app.route("/feed")
 def feed():
     c.feed()
+    time.sleep(1)
     return redirect(f"/")
 
 @app.route("/play")
 def play():
     c.play()
+    time.sleep(1)
     return redirect(f"/")
 
 @app.route("/test")

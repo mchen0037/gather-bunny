@@ -1,12 +1,18 @@
 from datetime import datetime
 import time
 
+SPRITE_URLS = {
+    'HAPPY_URL' :
+    'HUNGRY_URL' : "https://raw.githubusercontent.com/mchen0037/gather-bunny/master/static/hunger/hungry_0.png",
+}
+
 class Cat:
     def __init__(self):
         self.name = "todo"
         self.hunger = 100
         self.happiness = 50
         self.is_sleeping = False
+        self.current_sprite_url = SPRITE_URLS['HAPPY_URL']
 
         self.level = 1
         self.exp = 0
@@ -36,6 +42,10 @@ class Cat:
         if current_time.minute % 20:
             if not self.is_sleeping:
                 self.happiness = self.happiness - 1
+
+        # Update Sprites
+        if self.hunger < 30:
+            self.current_sprite_url = SPRITE_URLS['HUNGRY_URL']
 
     def play(self):
         delta = min(self.happiness + 20, 100) - self.happiness
