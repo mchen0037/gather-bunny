@@ -22,6 +22,7 @@ SPRITE_URLS = {
     'NORMAL_URL' : "https://raw.githubusercontent.com/mchen0037/gather-bunny/master/static/stand/stand0_0.png",
     'HUNGRY_URL' : "https://raw.githubusercontent.com/mchen0037/gather-bunny/master/static/hunger/hungry_0.png",
     'HAPPY_URL' : "https://raw.githubusercontent.com/mchen0037/gather-bunny/master/static/love/love_2.png",
+    'HAPPY_URL_HIGHLIGHT': "https://raw.githubusercontent.com/mchen0037/gather-bunny/master/static/love/love_3.png",
     'SLEEPING_URL' : "https://raw.githubusercontent.com/mchen0037/gather-bunny/master/static/sleep/sleep_3.png",
     'SAD_URL' : "https://raw.githubusercontent.com/mchen0037/gather-bunny/master/static/hunger/hungry_0.png",
 }
@@ -84,17 +85,30 @@ class Cat:
         """
         Based on changing values of state, we need to update the sprite
         """
+        new_map_state = self.get_gather_map_state()
 
         if new_state['is_sleeping']:
             new_state['current_sprite_url'] = SPRITE_URLS['SLEEPING_URL']
+            new_map_state['objects'][-1]['normal'] = SPRITE_URLS['SLEEPING_URL']
+            new_map_state['objects'][-1]['highlighted'] = SPRITE_URLS['SLEEPING_URL']
         elif new_state['hunger'] < 30:
             new_state['current_sprite_url'] = SPRITE_URLS['HUNGRY_URL']
+            new_map_state['objects'][-1]['normal'] = SPRITE_URLS['HUNGRY_URL']
+            new_map_state['objects'][-1]['highlighted'] = SPRITE_URLS['HUNGRY_URL']
         elif new_state['happiness'] < 30:
             new_state['current_sprite_url'] = SPRITE_URLS['SAD_URL']
+            new_map_state['objects'][-1]['normal'] = SPRITE_URLS['SAD_URL']
+            new_map_state['objects'][-1]['highlighted'] = SPRITE_URLS['SAD_URL']
         elif new_state['happiness'] > 75:
             new_state['current_sprite_url'] = SPRITE_URLS['HAPPY_URL']
+            new_map_state['objects'][-1]['normal'] = SPRITE_URLS['HAPPY_URL']
+            new_map_state['objects'][-1]['highlighted'] = SPRITE_URLS['HAPPY_URL_HIGHLIGHT']
         else:
             new_state['current_sprite_url'] = SPRITE_URLS['NORMAL_URL']
+            new_map_state['objects'][-1]['normal'] = SPRITE_URLS['NORMAL_URL']
+            new_map_state['objects'][-1]['highlighted'] = SPRITE_URLS['HAPPY_URL_HIGHLIGHT']
+
+        print(self.set_gather_map_state(new_map_state))
         return new_state
 
 
@@ -162,12 +176,15 @@ class Cat:
         print(self.set_gather_map_state(map_state))
         return
 
+    # def gather_change_sprite(self):
+    #     map_state = self.get_gather_map_state()
+
     def test(self):
         """
         Lower exp, happiness, and hunger to test the cat
         """
-        db.child("cats").child("Lily").child("happiness").set(30)
-        db.child("cats").child("Lily").child("hunger").set(30)
+        db.child("cats").child("Lily").child("happiness").set(29)
+        db.child("cats").child("Lily").child("hunger").set(29)
         # db.child("cats").child("Lily").child("is_sleeping").set(True)
 
     def get_state(self):
