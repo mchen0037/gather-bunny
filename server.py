@@ -55,7 +55,7 @@ def feed():
 @app.route("/play")
 def play():
     c.play()
-    return redirect(f"/", message="Yay!")
+    return redirect(f"/")
 
 @app.route("/test")
 def test():
