@@ -38,7 +38,7 @@ def cat():
     return render_template(
         'index.html',
         title="Hello",
-        pet_sprite="/static/love/love_7.png",
+        pet_sprite=c.current_sprite_url,
         pet_name=c.name,
         pet_hunger=int(c.hunger),
         pet_happiness=int(c.happiness),
@@ -61,7 +61,8 @@ def play():
 
 @app.route("/test")
 def test():
-    c.hunger = 30
+    c.hunger = 20
     c.happiness = 30
     c.exp = 0
+    c.update_state()
     return redirect(f"/")
