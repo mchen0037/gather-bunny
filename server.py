@@ -38,7 +38,8 @@ def light_thread():
 
 @app.route("/")
 def cat():
-
+    print("hunger", c.hunger)
+    print("happiness", c.happiness)
     return render_template(
         'index.html',
         title="Hello",
