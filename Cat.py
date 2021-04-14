@@ -64,10 +64,7 @@ class Cat:
         else:
             new_state['is_sleeping'] = False
 
-        # Reduce 1 hunger every 6 minutes--
-        # 10 hunger every hour
-        # 80 hunger every 8 hours
-        if current_time.minute % 6 == 0:
+        if current_time.minute % 8 == 0:
             if new_state['is_sleeping']:
                 new_state['hunger'] = max(new_state['hunger'] - 0.5, 0)
             else:
