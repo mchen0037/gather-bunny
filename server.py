@@ -4,6 +4,7 @@ from flask import jsonify
 from flask import render_template
 from flask_sslify import SSLify
 from flask_cors import CORS
+from flask import redirect
 
 import os
 
@@ -26,7 +27,7 @@ def light_thread():
     def run():
         while True:
             c.update_state()
-            time.sleep(60)
+            time.sleep(65)
     thread = threading.Thread(target=run)
     thread.start()
 
@@ -37,10 +38,28 @@ def cat():
     return render_template(
         'index.html',
         title="Hello",
-        pet_sprite="https://www.spriters-resource.com/resources/sheet_icons/20/21897.png",
+        pet_sprite="/static/love/love_7.png",
         pet_name=c.name,
         pet_hunger=int(c.hunger),
         pet_happiness=int(c.happiness),
-        pet_is_sleeping=c.is_sleeping
-
+        pet_is_sleeping=c.is_sleeping,
+        pet_level=int(c.level),
+        pet_exp=int(c.exp)
     )
+
+@app.route("/feed")
+def feed():
+    c.feed()
+    return redirect(f"/")
+
+@app.route("/play")
+def play():
+    c.play()
+    return redirect(f"/", message="Yay!")
+
+@app.route("/test")
+def test():
+    c.hunger = 30
+    c.happiness = 30
+    c.exp = 0
+    return redirect(f"/")

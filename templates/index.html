@@ -12,5 +12,14 @@
         {% else %}
         <p> {{pet_name}} is awake and ready to play!</p>
         {% endif %}
+        <p>Level: {{pet_level}}</p>
+        <p>Exp: {{pet_exp}} / 100</p>
     </body>
+    <a href="/feed">
+      <button>Feed</button>
+    </a>
+    <a href="/play">
+      <button>Play</button>
+    </a>
+
 </html>

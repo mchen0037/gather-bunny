@@ -7,6 +7,9 @@ class Cat:
         self.hunger = 100
         self.happiness = 50
         self.is_sleeping = False
+
+        self.level = 1
+        self.exp = 0
         self.update_state()
 
     def update_state(self):
@@ -26,16 +29,20 @@ class Cat:
         # 80 hunger every 8 hours
         if current_time.minute % 6:
             if self.is_sleeping:
-                self.hunger = self.hunger - 0.5
+                self.hunger = max(self.hunger - 0.5, 0)
             else:
-                self.hunger = self.hunger - 1
+                self.hunger = max(self.hunger - 1, 0)
 
         if current_time.minute % 20:
             if not self.is_sleeping:
                 self.happiness = self.happiness - 1
 
     def play(self):
-        self.happiness = max(self.happiness + 20, 100)
+        delta = min(self.happiness + 20, 100) - self.happiness
+        self.happiness = self.happiness + delta
+        self.exp = self.exp + (1 / self.level * delta)
 
     def feed(self):
-        self.hunger = max(self.hunger + 30, 100)
+        delta = min(self.hunger + 20, 100) - self.hunger
+        self.hunger = self.hunger + delta
+        self.exp = self.exp + (1 / self.level * delta)
