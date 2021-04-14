@@ -28,7 +28,8 @@ lock_variables = False
 def light_thread():
     def run():
         while True:
-            lock_variables = True
+            global c
+            global lock_variables = True
             c.update_state()
             lock_variables = False
             time.sleep(65)
