@@ -108,6 +108,10 @@ class Cat:
         new_state['happiness'] = new_state['happiness'] + delta
         new_state['exp'] = new_state['exp'] + (1 / new_state['level'] * delta)
 
+        if new_state['exp'] >= 100:
+            new_state['exp'] = new_state['exp'] - 100
+            new_state['level'] = new_state['level'] + 1
+
         # Need to update the sprite if necessary
         new_state = self.update_sprite(new_state)
         db.child("cats").child("Lily").set(new_state)
@@ -121,6 +125,10 @@ class Cat:
         delta = min(new_state['hunger'] + 20, 100) - new_state['hunger']
         new_state['hunger'] = new_state['hunger'] + delta
         new_state['exp'] = new_state['exp'] + (1 / new_state['level'] * delta)
+
+        if new_state['exp'] >= 100:
+            new_state['exp'] = new_state['exp'] - 100
+            new_state['level'] = new_state['level'] + 1
 
         # Need to update the sprite if necessary
         new_state = self.update_sprite(new_state)
