@@ -33,16 +33,21 @@ firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 db = firebase.database()
 
-
 @app.before_first_request
-def light_thread():
-    def run():
+def state_thread():
+    def run_state():
+        cnt = 0
         while True:
-            c.update_state()
-            time.sleep(60)
-    thread = threading.Thread(target=run)
-    thread.start()
+            print("hi")
+            if cnt == 6:
+                c.update_state()
+                cnt = 0
+            c.move_random_walk()
+            time.sleep(10)
+            cnt = cnt + 1
 
+    thread_state = threading.Thread(target=run_state)
+    thread_state.start()
 
 @app.route("/")
 def cat():

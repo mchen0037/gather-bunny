@@ -6,6 +6,7 @@ import requests
 import pyrebase
 import os
 
+import random
 
 config = {
   "apiKey": os.environ['GATHER_FB_API_KEY'],
@@ -105,9 +106,8 @@ class Cat:
             new_map_state['objects'][-1]['normal'] = SPRITE_URLS['NORMAL_URL']
             new_map_state['objects'][-1]['highlighted'] = SPRITE_URLS['HAPPY_URL_HIGHLIGHT']
 
-        print(self.set_gather_map_state(new_map_state))
+        print("update_sprite", self.set_gather_map_state(new_map_state))
         return new_state
-
 
     def play(self):
         """
@@ -145,33 +145,43 @@ class Cat:
         new_state = self.update_sprite(new_state)
         db.child("cats").child("Lily").set(new_state)
 
+
+    def move_random_walk(self):
+        print("hi")
+        dir = random.randint(0,3)
+        map_state = None
+        if dir == 0:
+            map_state = self.gather_move_up()
+        elif dir == 1:
+            map_state = self.gather_move_down()
+        elif dir == 2:
+            map_state = self.gather_move_left()
+        elif dir == 3:
+            map_state = self.gather_move_right()
+        else:
+            print("something went wrong.")
+        print("move_random_walk", self.set_gather_map_state(map_state))
+        return
+
     def gather_move_up(self):
         map_state = self.get_gather_map_state()
         map_state["objects"][-1]["y"] = map_state["objects"][-1]["y"] - 1
-        # print out the status code from the API
-        print(self.set_gather_map_state(map_state))
-        return
+        return map_state
 
     def gather_move_down(self):
         map_state = self.get_gather_map_state()
         map_state["objects"][-1]["y"] = map_state["objects"][-1]["y"] + 1
-        # print out the status code from the API
-        print(self.set_gather_map_state(map_state))
-        return
+        return map_state
 
     def gather_move_left(self):
         map_state = self.get_gather_map_state()
         map_state["objects"][-1]["x"] = map_state["objects"][-1]["x"] - 1
-        # print out the status code from the API
-        print(self.set_gather_map_state(map_state))
-        return
+        return map_state
 
     def gather_move_right(self):
         map_state = self.get_gather_map_state()
         map_state["objects"][-1]["x"] = map_state["objects"][-1]["x"] + 1
-        # print out the status code from the API
-        print(self.set_gather_map_state(map_state))
-        return
+        return map_state
 
     # def gather_change_sprite(self):
     #     map_state = self.get_gather_map_state()
