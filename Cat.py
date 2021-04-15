@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime as dt
 import time
 
 import requests
@@ -6,7 +6,7 @@ import requests
 import pyrebase
 import os
 
-
+PST = dt.timezone(dt.timedelta(hours=-8))
 config = {
   "apiKey": os.environ['GATHER_FB_API_KEY'],
   "authDomain": os.environ['GATHER_FB_AUTH_DOMAIN'],
@@ -53,7 +53,7 @@ class Cat:
         """
         # Determines if it is night time or not and returns True or False
         # Night time is determined as 10:00pm PST - 8am PST
-        current_time = datetime.now()
+        current_time = dt.datetime.now(PST)
         new_state = self.get_state()
 
         # self.set_sleep()
