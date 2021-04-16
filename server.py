@@ -39,11 +39,11 @@ def state_thread():
         cnt = 0
         while True:
             print("hi")
-            if cnt == 6:
+            if cnt == 60:
                 c.update_state()
                 cnt = 0
             c.move_random_walk()
-            time.sleep(10)
+            time.sleep(1)
             cnt = cnt + 1
 
     thread_state = threading.Thread(target=run_state)

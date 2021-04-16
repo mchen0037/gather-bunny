@@ -86,7 +86,7 @@ class Cat:
         """
         Based on changing values of state, we need to update the sprite
         """
-        new_map_state = self.get_gather_map_state()
+        new_map_state = self.get_gather_map_state(new_state['current_map'])
 
         if new_state['is_sleeping']:
             new_state['current_sprite_url'] = SPRITE_URLS['SLEEPING_URL']
@@ -109,7 +109,7 @@ class Cat:
             new_map_state['objects'][-1]['normal'] = SPRITE_URLS['NORMAL_URL']
             new_map_state['objects'][-1]['highlighted'] = SPRITE_URLS['HAPPY_URL_HIGHLIGHT']
 
-        print("update_sprite", self.set_gather_map_state(new_map_state))
+        print("update_sprite", self.set_gather_map_state(new_map_state, new_state['current_map']))
         return new_state
 
     def play(self):
@@ -150,9 +150,16 @@ class Cat:
 
 
     def move_random_walk(self):
-
+        """
+        Calculate collisions based on our current position, make a random step.
+        After calculating the step that we will take, determine if we are on
+        any portals. If we are on a portal, we will teleport to that new map.
+        """
         dir = random.randint(0,3)
-        map_state = self.get_gather_map_state()
+        lily_state = self.get_state()
+        lily_current_map = lily_state['current_map']
+        map_state = self.get_gather_map_state(lily_current_map)
+
         # Grab current xycor of cat so we can check for collisions.
         current_xcor = map_state["objects"][-1]["x"]
         current_ycor = map_state["objects"][-1]["y"]
@@ -177,9 +184,39 @@ class Cat:
         )
 
         if len(possible_direction_procedures) > 0:
-            map_state = random.choice(possible_direction_procedures)()
+            map_state = random.choice(possible_direction_procedures)(lily_current_map)
 
-        print("move_random_walk", self.set_gather_map_state(map_state))
+        new_current_xcor = map_state["objects"][-1]["x"]
+        new_current_ycor = map_state["objects"][-1]["y"]
+
+        # Before sending the request to setMap, we should calculate if
+        # Lily is standing on any portals.
+
+        portals = map_state['portals']
+        portal_standing_on = self.check_for_portals(
+            portals, new_current_xcor, new_current_ycor
+        )
+
+        if portal_standing_on is not None:
+            # 1. Grab the Target Coordinates
+            target_map_name = portal_standing_on['targetMap']
+            target_x = portal_standing_on['targetX']
+            target_y = portal_standing_on['targetY']
+
+            # 2. Delete Lily from current map (oh god)
+            lily = map_state["objects"].pop()
+            lily['x'] = target_x
+            lily['y'] = target_y
+
+            # 3. Redirect the map that Lily needs to go.
+            target_map_state = self.get_gather_map_state(target_map_name)
+            target_map_state['objects'].append(lily)
+            db.child("cats").child("Lily").child("current_map").set(target_map_name)
+
+            # 4. Update database map that lily is in.
+            self.set_gather_map_state(target_map_state, target_map_name)
+
+        print("move_random_walk", self.set_gather_map_state(map_state, lily_current_map))
         return
 
     def check_possible_directions(self, map_state, current_xcor, current_ycor):
@@ -195,29 +232,34 @@ class Cat:
 
         return collision_array.get_collision_neighbors(current_xcor, current_ycor)
 
+    def check_for_portals(self, portals, new_current_xcor, new_current_ycor):
+        for portal in portals:
+            if ( portal['x'] == new_current_xcor and
+                portal['y'] == new_current_ycor
+                ):
+                return portal
+        return None
 
-    def gather_move_up(self):
-        map_state = self.get_gather_map_state()
+
+    def gather_move_up(self, map_name):
+        map_state = self.get_gather_map_state(map_name)
         map_state["objects"][-1]["y"] = map_state["objects"][-1]["y"] - 1
         return map_state
 
-    def gather_move_down(self):
-        map_state = self.get_gather_map_state()
+    def gather_move_down(self, map_name):
+        map_state = self.get_gather_map_state(map_name)
         map_state["objects"][-1]["y"] = map_state["objects"][-1]["y"] + 1
         return map_state
 
-    def gather_move_left(self):
-        map_state = self.get_gather_map_state()
+    def gather_move_left(self, map_name):
+        map_state = self.get_gather_map_state(map_name)
         map_state["objects"][-1]["x"] = map_state["objects"][-1]["x"] - 1
         return map_state
 
-    def gather_move_right(self):
-        map_state = self.get_gather_map_state()
+    def gather_move_right(self, map_name):
+        map_state = self.get_gather_map_state(map_name)
         map_state["objects"][-1]["x"] = map_state["objects"][-1]["x"] + 1
         return map_state
-
-    # def gather_change_sprite(self):
-    #     map_state = self.get_gather_map_state()
 
     def test(self):
         """
@@ -225,27 +267,26 @@ class Cat:
         """
         db.child("cats").child("Lily").child("happiness").set(29)
         db.child("cats").child("Lily").child("hunger").set(29)
-        # db.child("cats").child("Lily").child("is_sleeping").set(True)
 
     def get_state(self):
         return db.child("cats").child("Lily").get().val()
 
-    def get_gather_map_state(self):
+    def get_gather_map_state(self, map_id):
         map_state = requests.get("https://gather.town/api/getMap",
             params={
                 "apiKey": os.environ["GATHER_API_KEY"],
                 "spaceId": "Uu7dRIJ7BdzD44NS\\party",
-                "mapId": "homeroom"
+                "mapId": map_id
             }
         )
         return map_state.json()
 
-    def set_gather_map_state(self, new_map):
+    def set_gather_map_state(self, new_map, map_id):
         req = requests.post("https://gather.town/api/setMap",
             json={
                 "apiKey": os.environ["GATHER_API_KEY"],
                 "spaceId": "Uu7dRIJ7BdzD44NS\\party",
-                "mapId": "homeroom",
+                "mapId": map_id,
                 "mapContent": new_map
             }
         )
