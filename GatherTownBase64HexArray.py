@@ -1,5 +1,6 @@
 import base64
 
+# by Fragrag#5448 on the discord channel
 class GatherTownBase64HexArray:
     """
     Class that represents a Base64 Hexadecimal array
@@ -15,21 +16,6 @@ class GatherTownBase64HexArray:
         hex_array_bytes = base64.b64decode(hex_array_base64_bytes)
 
         return bytearray(hex_array_bytes)
-
-    def set_byte_array(self, new_array: bytearray):
-        hex_array_encoded_data = base64.b64encode(new_array)
-        self.hex_array_base64 = hex_array_encoded_data.decode('ascii')
-
-    def set_value_at_location(self, x: int, y: int, isTrue: bool):
-        position = x + (y * self.map_dimensions['x'])
-        byte_array = self.get_byte_array()
-
-        if isTrue:
-            byte_array[position] = 1
-        else:
-            byte_array[position] = 0
-
-        self.set_byte_array(byte_array)
 
     def get_collision_neighbors(self, my_x, my_y):
         # i.e. (10, 2)
