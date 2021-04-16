@@ -5,6 +5,10 @@ import requests
 
 import pyrebase
 import os
+
+import random
+
+from GatherTownBase64HexArray import GatherTownBase64HexArray
 PST = dt.timezone(dt.timedelta(hours=-8))
 
 config = {
@@ -146,21 +150,51 @@ class Cat:
 
 
     def move_random_walk(self):
-        print("hi")
+
         dir = random.randint(0,3)
-        map_state = None
-        if dir == 0:
-            map_state = self.gather_move_up()
-        elif dir == 1:
-            map_state = self.gather_move_down()
-        elif dir == 2:
-            map_state = self.gather_move_left()
-        elif dir == 3:
-            map_state = self.gather_move_right()
-        else:
-            print("something went wrong.")
+        map_state = self.get_gather_map_state()
+        # Grab current xycor of cat so we can check for collisions.
+        current_xcor = map_state["objects"][-1]["x"]
+        current_ycor = map_state["objects"][-1]["y"]
+
+        # [up, down, left, right]
+        collision_neighbors = self.check_possible_directions(
+            map_state, current_xcor, current_ycor
+        )
+
+        possible_direction_procedures = []
+        if not collision_neighbors[0]: possible_direction_procedures.append(
+            self.gather_move_up
+        )
+        if not collision_neighbors[1]: possible_direction_procedures.append(
+            self.gather_move_down
+        )
+        if not collision_neighbors[2]: possible_direction_procedures.append(
+            self.gather_move_left
+        )
+        if not collision_neighbors[3]: possible_direction_procedures.append(
+            self.gather_move_right
+        )
+
+        if len(possible_direction_procedures) > 0:
+            map_state = random.choice(possible_direction_procedures)()
+
         print("move_random_walk", self.set_gather_map_state(map_state))
         return
+
+    def check_possible_directions(self, map_state, current_xcor, current_ycor):
+    # def check_possible_directions(self, map_state):
+        """
+        Checks for collisions based on current x, y cooridnate
+        Returns list of [0, 0, 0, 0] where 1 is a collision and 0 is not.
+        """
+        collision_array = GatherTownBase64HexArray(
+            map_state['collisions'],
+            map_state['dimensions']
+        )
+
+        return collision_array.get_collision_neighbors(current_xcor, current_ycor)
+
 
     def gather_move_up(self):
         map_state = self.get_gather_map_state()
