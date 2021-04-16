@@ -38,7 +38,6 @@ def state_thread():
     def run_state():
         cnt = 0
         while True:
-            print("hi")
             if cnt == 6:
                 c.update_state()
                 cnt = 0

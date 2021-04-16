@@ -242,21 +242,25 @@ class Cat:
 
 
     def gather_move_up(self, map_name):
+        print("move_up")
         map_state = self.get_gather_map_state(map_name)
         map_state["objects"][-1]["y"] = map_state["objects"][-1]["y"] - 1
         return map_state
 
     def gather_move_down(self, map_name):
+        print("move_down")
         map_state = self.get_gather_map_state(map_name)
         map_state["objects"][-1]["y"] = map_state["objects"][-1]["y"] + 1
         return map_state
 
     def gather_move_left(self, map_name):
+        print("move_left")
         map_state = self.get_gather_map_state(map_name)
         map_state["objects"][-1]["x"] = map_state["objects"][-1]["x"] - 1
         return map_state
 
     def gather_move_right(self, map_name):
+        print("move_right")
         map_state = self.get_gather_map_state(map_name)
         map_state["objects"][-1]["x"] = map_state["objects"][-1]["x"] + 1
         return map_state
