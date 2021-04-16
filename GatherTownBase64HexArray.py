@@ -32,16 +32,21 @@ class GatherTownBase64HexArray:
         right_position = my_position + 1
 
         # set collision to 1 if it's a collision or if we're at the edge of map
-        if byte_array[up_position] == 1 or up_position < self.map_dimensions[0]:
+        if (up_position < self.map_dimensions[0] or
+            byte_array[up_position] == 1
+        ):
             collision_neighbors[0] = True
-        if (byte_array[down_position] == 1 or
-            down_position > len(byte_array) - self.map_dimensions[0]
+
+        if (down_position > len(byte_array) - self.map_dimensions[0] or
+            byte_array[down_position] == 1
         ):
             collision_neighbors[1] = True
+
         if (byte_array[left_position] == 1 or
             left_position % self.map_dimensions[0] == 0
         ):
             collision_neighbors[2] = True
+
         if (byte_array[right_position] == 1 or
             right_position % (self.map_dimensions[0] - 1) == 0
         ):
