@@ -5,12 +5,13 @@ c = Cat()
 while True:
     direction = input("")
     if direction == "w":
-        c.gather_move_up()
+        map_state = c.gather_move_up()
     elif direction == "a":
-        c.gather_move_left()
+        map_state = c.gather_move_left()
     elif direction == "s":
-        c.gather_move_down()
+        map_state = c.gather_move_down()
     elif direction == "d":
-        c.gather_move_right()
+        map_state = c.gather_move_right()
     else:
         print("invalid input")
+    print(c.set_gather_map_state(map_state))
