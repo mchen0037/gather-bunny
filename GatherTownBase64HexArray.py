@@ -42,8 +42,8 @@ class GatherTownBase64HexArray:
         ):
             collision_neighbors[1] = True
 
-        if ( left_position % self.map_dimensions[0] == 0
-            byte_array[left_position] == 1 or
+        if ( left_position % self.map_dimensions[0] == 0 or
+            byte_array[left_position] == 1
         ):
             collision_neighbors[2] = True
 
