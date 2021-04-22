@@ -60,11 +60,10 @@ class Cat:
         current_time = dt.datetime.now(PST)
         new_state = self.get_state()
 
-        # self.set_sleep()
-
         if current_time.hour >= 22 or current_time.hour <= 8:
             # self.is_sleeping = True
             new_state['is_sleeping'] = True
+            self.update_cafe_board()
         else:
             new_state['is_sleeping'] = False
 
@@ -264,6 +263,48 @@ class Cat:
         map_state = self.get_gather_map_state(map_name)
         map_state["objects"][-1]["x"] = map_state["objects"][-1]["x"] + 1
         return map_state
+
+    def update_cafe_board(self):
+        """
+        Update the cafe board with a new random qod
+        """
+        board_id = '1wM0xV12VmiM3ObLIFJ4-_1402fde1-22ff-46a9-b4c3-7c91abdea15d'
+        map_name = "coffee"
+        map_state = self.get_gather_map_state(map_name)
+        cafe_board_index = self.get_gather_object_index_by_id(map_state, board_id)
+        cafe_board = map_state['objects'][cafe_board_index]
+
+        # Call API to get quote of the day
+        data = requests.get(
+            "https://quotes.rest/qod?language=en"
+        )
+
+        res = data.json()
+        if res is None:
+            quote = "You look beautiful today"
+            auth = "Mighty Chen"
+        else:
+            quote = res['contents']['quotes'][0]['quote'] or "You look beautiful today"
+            auth = res['contents']['quotes'][0]['author'] or "Mighty Chen"
+
+        content = quote + " --" + auth
+
+        cafe_board['properties']['message'] = content
+        map_state['objects'][cafe_board_index] = cafe_board
+
+        print("update_cafe_board", self.set_gather_map_state(map_state, map_name))
+
+
+    def get_gather_object_index_by_id(self, map_state, obj_id):
+        """
+        Go through all of the objects and find the index of a specific obj_id
+        """
+        for i in range(len(map_state['objects'])):
+            obj = map_state['objects'][i]
+            if "id" in obj.keys():
+                if obj['id'] == obj_id:
+                    return i
+        return None
 
     def test(self):
         """
