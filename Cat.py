@@ -63,7 +63,8 @@ class Cat:
         if current_time.hour >= 22 or current_time.hour <= 8:
             # self.is_sleeping = True
             new_state['is_sleeping'] = True
-            self.update_cafe_board()
+            if current_time.minute == 1:
+                self.update_cafe_board()
         else:
             new_state['is_sleeping'] = False
 
