@@ -275,12 +275,11 @@ class Cat:
         cafe_board = map_state['objects'][cafe_board_index]
 
         # Call API to get quote of the day
-        # data = requests.get(
-        #     "https://quotes.rest/qod?language=en"
-        # )
-        #
-        # res = data.json()
-        res = None
+        data = requests.get(
+            "https://quotes.rest/qod?language=en"
+        )
+
+        res = data.json()
         if res is None:
             quote = "You look beautiful today"
             auth = "Mighty Chen"
@@ -293,7 +292,7 @@ class Cat:
         cafe_board['properties']['message'] = content
         map_state['objects'][cafe_board_index] = cafe_board
 
-        print("update_cafe_board", self.set_gather_map_state(map_name, map_state))
+        print("update_cafe_board", self.set_gather_map_state(map_state, map_name))
 
 
     def get_gather_object_index_by_id(self, map_state, obj_id):
