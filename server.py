@@ -33,7 +33,7 @@ firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 db = firebase.database()
 
-PASSWORD = "gathermods"
+PASSWORD = os.environ['GATHER_LIBRARY_PASSWORD']
 
 @app.before_first_request
 def state_thread():
