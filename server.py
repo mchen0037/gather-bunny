@@ -33,6 +33,8 @@ firebase = pyrebase.initialize_app(config)
 auth = firebase.auth()
 db = firebase.database()
 
+PASSWORD = "gathermods"
+
 @app.before_first_request
 def state_thread():
     def run_state():
@@ -42,6 +44,7 @@ def state_thread():
                 c.update_state()
                 cnt = 0
             c.move_random_walk()
+            c.lock_bookshelf()
             time.sleep(10)
             cnt = cnt + 1
 
@@ -86,3 +89,23 @@ def test():
     c.exp = 0
     c.update_state()
     return redirect(f"/")
+
+@app.route("/bookshelf")
+def bookshelf():
+    return render_template(
+        "bookshelf.html"
+    )
+@app.route("/check_password")
+def check_password():
+    input_pass = request.args.get("password")
+    if input_pass == PASSWORD:
+        # success, update map so they can go through
+        c.unlock_bookshelf()
+        return render_template(
+            "bookshelf_success.html"
+        )
+    else:
+        # error,
+        return render_template(
+            "bookshelf_error.html"
+        )

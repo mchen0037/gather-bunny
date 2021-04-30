@@ -307,6 +307,43 @@ class Cat:
                     return i
         return None
 
+    def unlock_bookshelf(self):
+        """
+        Removes the collision object where the bookshelf is.
+        """
+        map_name = "library"
+        map_state = self.get_gather_map_state(map_name)
+        door_x = 11
+        door_y = 37
+
+        collision_array = GatherTownBase64HexArray(
+            map_state['collisions'],
+            map_state['dimensions']
+        )
+
+        collision_array.set_value_at_location(door_x, door_y, 0)
+        map_state['collisions'] = collision_array.hex_array_base64
+        print("unlocking bookshelf", self.set_gather_map_state(map_state, map_name))
+
+    def lock_bookshelf(self):
+        """
+        Replaces the collision object where the bookshelf is.
+        """
+        map_name = "library"
+        map_state = self.get_gather_map_state(map_name)
+        door_x = 11
+        door_y = 37
+
+        collision_array = GatherTownBase64HexArray(
+            map_state['collisions'],
+            map_state['dimensions']
+        )
+
+        collision_array.set_value_at_location(door_x, door_y, 1)
+        map_state['collisions'] = collision_array.hex_array_base64
+        print("locking bookshelf", self.set_gather_map_state(map_state, map_name))
+
+
     def test(self):
         """
         Lower exp, happiness, and hunger to test the cat
